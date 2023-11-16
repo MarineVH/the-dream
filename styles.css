@@ -1,16 +1,81 @@
-body {
-    background-image: URL(images/4192007.jpg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    display: flex;
-    height: 100vh;
-    margin: 0;
+@media only screen and (min-width: 320px){
+    body {
+        background-image: URL(images/4192007.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    form {
+        color: #045890;
+        background-color: rgba(12, 212, 236, 0.7);
+        border-radius: 20px;
+        margin: auto;
+        padding: 30px;
+        width: 75%;
+        height: 30%;
+    }
+
+    .form-group {
+        display: grid;
+        grid-template-columns: minmax(100px, 1fr) minmax(100px, 1fr);
+        grid-template-rows: 1fr 1fr;
+        gap: 4px 16px;
+    }
+
+    select, input {
+        background-color: rgba(12, 212, 236, 0);
+        color: #045890;
+        font-size: 20px;
+        padding: 0.5em 1em;
+        border: 0;
+        font-weight: bold;
+    }
+
+    select {
+        display: list-item;
+    }
+
+    input::placeholder {
+        color: #045890;
+    }
 }
 
-#currency-converter {
-    color: #045890;
-    background-color: rgba(12, 212, 236, 0.7);
-    border-radius: 20px;
-    margin: auto;
-    padding: 20px;
+@media only screen and (min-width: 768px) {
+    form {
+        color: #045890;
+        background-color: rgba(12, 212, 236, 0.7);
+        border-radius: 20px;
+        margin: auto;
+        padding: 30px;
+        width: 40%;
+        height: 25%;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    form {
+        color: #045890;
+        background-color: rgba(12, 212, 236, 0.7);
+        border-radius: 20px;
+        margin: auto;
+        padding: 30px;
+        width: 30%;
+        height: 25%;
+    }
+
+    .form-group {
+        display: grid;
+        grid-template-columns: minmax(100px, 1fr) minmax(100px, 1fr);
+        grid-template-rows: 1fr 1fr;
+        gap: 4px 16px;
+    }
 }
