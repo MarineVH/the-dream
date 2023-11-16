@@ -1,0 +1,11 @@
+body {
+    background-image: URL(images/4192007.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#currency-converter {
+    color: #045890;
+    background-color: rgba(12, 212, 236, 0.7);
+    border-radius: 20px;
+}
