@@ -11,7 +11,7 @@
         <title>Currency Converter</title>
     </head>
     <body>
-        <div class="container w-25 p-5 mt-5" id="currency-converter">
+        <div class="container w-25" id="currency-converter">
             <h1 class="mb-4">Currency converter</h1> 
             <div class="inputs">
                 <div class="input-group mb-3" id="currency">

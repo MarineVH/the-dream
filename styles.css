@@ -2,10 +2,15 @@ body {
     background-image: URL(images/4192007.jpg);
     background-repeat: no-repeat;
     background-size: cover;
+    display: flex;
+    height: 100vh;
+    margin: 0;
 }
 
 #currency-converter {
     color: #045890;
     background-color: rgba(12, 212, 236, 0.7);
     border-radius: 20px;
+    margin: auto;
+    padding: 20px;
 }
