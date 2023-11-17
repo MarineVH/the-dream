@@ -1,44 +1,47 @@
 <?php
-// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get user input
-    $amount = $_POST['pay'];
-    $from_currency = $_POST['currency1'];
-    $to_currency = $_POST['currency2'];
+    $fromCurrency = $_POST["currency1"];
+    $toCurrency = $_POST["currency2"];
+    $amount = $_POST["pay"];
 
-    // Replace 'YOUR_API_KEY' with your actual ExchangeRate-API key
-    $api_key = '?apikey=fca_live_XG0eGRlXIjrDcXrkm0YOGg4sKqjhwAqFAoXZXjg0';
+    $keyApi = "fca_live_D22BvMjeKImGKWWRYE7T8679g7TnrVk2Ju7jIKkY";
+    $apiUrl = "https://api.freecurrencyapi.com/v1/latest";
+    $url = "{$apiUrl}?apikey={$keyApi}&base_currency={$fromCurrency}&symbols={$toCurrency}";
 
-    // API endpoint
-    $api_endpoint = "https://api.freecurrencyapi.com/v1/latest/{$api_key}";
+    $certPath = __DIR__ . '/cacert.pem';
 
-    // Fetch exchange rates from the API
-    $exchange_rates_json = file_get_contents($api_endpoint);
-    $exchange_rates = json_decode($exchange_rates_json, true);
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CAINFO => $certPath,
+    ]);
 
-    // Check if the API request was successful
-    if ($exchange_rates['result'] == 'success') {
-        // Get exchange rates
-        $rates = $exchange_rates['rates'];
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
 
-        // Convert currency
-        $converted_amount = $amount * ($rates[$to_currency] / $rates[$from_currency]);
-
-        // Display the result
-        echo '<h1 class="mb-4">Currency converter</h1>';
-        echo '<div class="form-group">';
-        echo '<select name="currency1" value="' . $from_currency . '" disabled>';
-        echo '<option>' . $from_currency . ' - ' . array_search($rates[$from_currency], $rates) . '</option>';
-        echo '</select>';
-        echo '<input type="text" name="pay" aria-label="Pay" placeholder="' . $amount . '" disabled></br>';
-        echo '<select name="currency2" value="' . $to_currency . '" disabled>';
-        echo '<option>' . $to_currency . ' - ' . array_search($rates[$to_currency], $rates) . '</option>';
-        echo '</select>';
-        echo '<input type="text" id="receive" placeholder="' . number_format($converted_amount, 2) . '" aria-label="Convert" aria-describedby="button-addon1" readonly>';
-        echo '</div>';
+    if ($err) {
+        echo "Erreur cURL : " . $err;
     } else {
-        // Display an error message if the API request failed
-        echo '<p>Error fetching exchange rates. Please try again later.</p>';
+        $data = json_decode($response, true);
+
+        if ($data && isset($data['data'])) {
+            $rates = $data['data'];
+
+            if (isset($rates[$toCurrency])) {
+                $conversionRate = $rates[$toCurrency];
+                $rounded_conversion = number_format($conversionRate, 4);
+                $result = $amount * $conversionRate;
+                $rounded_number = number_format($result, 2);
+               
+            } else {
+                echo "Erreur : Taux de change non disponibles pour la devise de destination.";
+            }
+        } else {
+            echo "Erreur lors de la conversion.";
+        }
+
+        curl_close($curl);
     }
 }
 ?>
@@ -53,30 +56,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <title>Currency Converter</title>
     </head>
     <body>
-        <form method="post" id="currency-converter">
+        <form method="post" action="convert.php" id="currency-converter">
             <h1 class="mb-4">Currency Converter</h1> 
             <div class="form-group grid-container">
-                <select name="currency1">
+                <select name="currency1" selected>
                     <option value="AUD">AUD - Australian Dollar</option>
-                    <option value="EGP">EGP - Egyptian Pound</option>
                     <option value="EUR">EUR - Euro</option>
                     <option value="INR">INR - Indian Rupee</option>
                     <option value="CNY">CNY - Chinese Yuan</option>
                     <option value="USD">USD - US Dollar</option>
                 </select>
 
-                <input type="text" name="pay" aria-label="Pay" placeholder="0">
+                <input type="number" inputmode="numeric" name="pay" aria-label="Pay" min="0" placeholder="0" value=<?= if (isset($_POST["pay"])) ?>>
                 
-                <select name="currency2">
+                <select name="currency2" selected>
                     <option value="AUD">AUD - Australian Dollar</option>
-                    <option value="EGP">EGP - Egyptian Pound</option>
                     <option value="EUR">EUR - Euro</option>
                     <option value="INR">INR - Indian Rupee</option>
                     <option value="CNY">CNY - Chinese Yuan</option>
                     <option value="USD">USD - US Dollar</option>
                 </select>
 
-                <input type="text" id="receive" placeholder="0" aria-label="Convert" aria-describedby="button-addon1" readonly >
+                <output type="number" id="receive" placeholder="0" aria-label="Convert" aria-describedby="button-addon1" readonly><?php echo $rounded_number ?></output>
+                <button type="submit">Convert</button>
             </div>
         </form>
     </body>
